@@ -4,8 +4,27 @@
   "version": "0.1.0",
   "description": "A Typora-like WYSIWYG Markdown editor",
   "author": "Inkdown Contributors",
-  "main": "./out/main/index.js",
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akiker233/Inkdown.git"
+  },
+  "homepage": "https://github.com/akiker233/Inkdown#readme",
+  "bugs": {
+    "url": "https://github.com/akiker233/Inkdown/issues"
+  },
+  "keywords": [
+    "markdown",
+    "editor",
+    "wysiwyg",
+    "typora",
+    "electron",
+    "desktop"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
