@@ -1,0 +1,630 @@
+/**
+ * 文档排版唯一真源 —— 编辑器与导出 HTML 共用同一份文件。
+ *
+ * 双选择器结构 `:is(h1, .md-h1)`：
+ *   - 编辑器里 CodeMirror 产出的是 <div class="cm-line md-h1">，命中 .md-* 分支
+ *   - 导出 HTML 里是语义标签 <h1>，命中标签分支
+ * 因此"编辑器里看到的"与"导出得到的"天然一致，不存在两套样式各自漂移的问题。
+ *
+ * 两者共同的外层容器类名为 .markdown-body，避免这些规则污染应用 UI。
+ */
+
+.markdown-body {
+  font-family: var(--md-font-family);
+  font-size: var(--md-font-size);
+  line-height: var(--md-line-height);
+  color: var(--text-color);
+  word-wrap: break-word;
+}
+
+/* ── 标题 ── */
+.markdown-body :is(h1, .md-h1) {
+  font-size: 1.9em;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 1.6em 0 0.7em;
+}
+.markdown-body :is(h2, .md-h2) {
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 1.4em 0 0.6em;
+}
+.markdown-body :is(h3, .md-h3) {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 1.2em 0 0.5em;
+}
+.markdown-body :is(h4, .md-h4) {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 1.1em 0 0.45em;
+}
+.markdown-body :is(h5, .md-h5) {
+  font-size: 1em;
+  font-weight: 600;
+  margin: 1em 0 0.4em;
+}
+.markdown-body :is(h6, .md-h6) {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: var(--meta-content-color);
+  margin: 1em 0 0.4em;
+}
+.markdown-body :is(h1, .md-h1):first-child {
+  margin-top: 0;
+}
+
+/* ── 段落与换行 ── */
+.markdown-body :is(p, .md-p) {
+  margin: 0 0 0.9em;
+}
+
+/* ── 行内元素 ── */
+.markdown-body :is(strong, .md-strong) {
+  font-weight: 700;
+}
+.markdown-body :is(em, .md-em) {
+  font-style: italic;
+}
+.markdown-body :is(del, .md-del) {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+.markdown-body :is(mark, .md-mark) {
+  background: var(--md-mark-bg);
+  padding: 0.1em 0.2em;
+  border-radius: 2px;
+}
+.markdown-body :is(u, .md-u) {
+  text-decoration: underline;
+}
+.markdown-body :is(sub, .md-sub) {
+  font-size: 0.78em;
+  vertical-align: sub;
+}
+.markdown-body :is(sup, .md-sup) {
+  font-size: 0.78em;
+  vertical-align: super;
+}
+.markdown-body :is(code, .md-code) {
+  font-family: var(--md-mono-font);
+  font-size: 0.88em;
+  background: var(--md-code-bg);
+  padding: 0.15em 0.35em;
+  border-radius: 3px;
+}
+.markdown-body :is(a, .md-link) {
+  color: var(--md-link-color);
+  text-decoration: none;
+}
+.markdown-body :is(a, .md-link):hover {
+  text-decoration: underline;
+}
+.markdown-body .md-wikilink {
+  color: var(--md-link-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.markdown-body .md-url {
+  color: var(--md-link-color);
+}
+
+/* 语法标记：仅在源码态或光标进入时露出，用弱化色 */
+.markdown-body .md-char {
+  color: var(--md-char-color);
+}
+
+/* ── 引用 ── */
+/* 只作用于真正的 <blockquote>；.md-blockquote 是引用标记 token 的高亮类，不能当块级容器用 */
+.markdown-body blockquote {
+  margin: 0 0 0.9em;
+  padding-left: 1em;
+  border-left: 4px solid var(--md-quote-border);
+  color: var(--meta-content-color);
+}
+.markdown-body blockquote :is(p, .md-p):last-child {
+  margin-bottom: 0;
+}
+
+/* ── 列表 ── */
+.markdown-body :is(ul, .md-ul) {
+  margin: 0 0 0.9em;
+  padding-left: 1.6em;
+}
+.markdown-body :is(ol, .md-ol) {
+  margin: 0 0 0.9em;
+  padding-left: 1.6em;
+}
+.markdown-body :is(li, .md-li) {
+  margin: 0.2em 0;
+}
+
+/* ── 代码块 ── */
+.markdown-body :is(pre, .md-codeblock) {
+  font-family: var(--md-mono-font);
+  font-size: 0.88em;
+  line-height: 1.55;
+  background: var(--md-code-bg);
+  border-radius: 6px;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  margin: 0 0 1em;
+}
+.markdown-body :is(pre, .md-codeblock) :is(code, .md-code) {
+  background: none;
+  padding: 0;
+  font-size: 1em;
+}
+
+/* ── 分割线 ── */
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--md-hr-color);
+  margin: 1.6em 0;
+}
+
+/* ── 表格 ── */
+.markdown-body :is(table, .md-table) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 1em;
+}
+.markdown-body :is(th, .md-th, td, .md-td) {
+  border: 1px solid var(--md-table-border);
+  padding: 0.45em 0.75em;
+}
+.markdown-body :is(th, .md-th) {
+  font-weight: 600;
+  background: var(--md-code-bg);
+}
+
+/* ── 图片 ── */
+.markdown-body :is(img, .md-img) {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+/* ── 代码 token 高亮 ──
+ * 编辑器侧由 CodeMirror HighlightStyle 输出 .tok-* 类名；
+ * 导出侧（M7）会从同一批 --code-* 变量生成 highlight.js 主题，保持零漂移。
+ */
+.tok-keyword {
+  color: var(--code-keyword);
+}
+.tok-string {
+  color: var(--code-string);
+}
+.tok-comment {
+  color: var(--code-comment);
+  font-style: italic;
+}
+.tok-number {
+  color: var(--code-number);
+}
+.tok-function {
+  color: var(--code-function);
+}
+.tok-type {
+  color: var(--code-type);
+}
+.tok-operator {
+  color: var(--code-operator);
+}
+.tok-variable {
+  color: var(--code-variable);
+}
+.tok-property {
+  color: var(--code-property);
+}
+.tok-tag {
+  color: var(--code-tag);
+}
+.tok-attr {
+  color: var(--code-attr);
+}
+.tok-punct {
+  color: var(--code-punct);
+}
+.tok-bool {
+  color: var(--code-bool);
+}
+
+/* ── 块级即时渲染（编辑器专属） ──
+ * 行内 .md-* 类由 HighlightStyle 产出，这里只处理
+ * 隐藏标记后留下的"行级排版"与 widget 外观。
+ */
+
+/* 标题：字号由行内 .md-h* 负责，行级只补垂直间距 */
+.editor-host .cm-line.md-heading-line {
+  line-height: 1.35;
+}
+.editor-host .cm-line.md-h1-line {
+  padding-top: 26px !important;
+  padding-bottom: 8px !important;
+}
+.editor-host .cm-line.md-h2-line {
+  padding-top: 22px !important;
+  padding-bottom: 6px !important;
+}
+.editor-host .cm-line.md-h3-line {
+  padding-top: 18px !important;
+  padding-bottom: 5px !important;
+}
+.editor-host .cm-line.md-h4-line,
+.editor-host .cm-line.md-h5-line,
+.editor-host .cm-line.md-h6-line {
+  padding-top: 14px !important;
+  padding-bottom: 4px !important;
+}
+
+/* 引用：每行独立边框，光标所在行会露出 ">" */
+.editor-host .cm-line.md-quote-line {
+  border-left: 3px solid var(--md-quote-border);
+  padding-left: 14px !important;
+  color: var(--meta-content-color);
+}
+.editor-host .cm-line.md-quote-depth-2 {
+  padding-left: 28px !important;
+}
+.editor-host .cm-line.md-quote-depth-3 {
+  padding-left: 42px !important;
+}
+.editor-host .cm-line.md-quote-depth-4 {
+  padding-left: 56px !important;
+}
+
+/* 列表 */
+.editor-host .cm-line.md-list-line {
+  padding-left: 2px !important;
+}
+.markdown-body .md-list-number {
+  color: var(--text-color);
+}
+.md-bullet {
+  display: inline-block;
+  width: 1.1em;
+  text-align: center;
+  color: var(--meta-content-color);
+  user-select: none;
+}
+.md-bullet-1 {
+  font-size: 0.92em;
+}
+.md-bullet-2 {
+  font-size: 0.7em;
+}
+.md-task {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-right: 0.4em;
+  user-select: none;
+}
+.md-task input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+/* 分割线 */
+/* 行内替换里的块级内容必须保持 inline 级，否则 CM 会多出匿名行盒、行高错乱 */
+.md-hr-widget {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  padding: 0.45em 0;
+}
+.md-hr-widget hr {
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--md-hr-color);
+}
+.editor-host .cm-line.md-hr-line {
+  color: var(--md-char-color);
+}
+
+/* 图片 */
+.md-image-widget {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  max-width: 100%;
+  margin: 0.45em 0;
+}
+.md-image-widget img {
+  display: block;
+  max-width: 100%;
+  border-radius: 4px;
+}
+.md-image-fallback {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px dashed var(--ui-border);
+  border-radius: 6px;
+  background: var(--md-code-bg);
+  color: var(--meta-content-color);
+  font-size: 0.85em;
+}
+.md-image-fallback[hidden] {
+  display: none;
+}
+
+/* 公式 */
+.markdown-body .md-math {
+  font-size: 1.02em;
+}
+.md-math-block {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  padding: 0.35em 0;
+  overflow-x: auto;
+  text-align: center;
+}
+.md-math-block .katex-display {
+  margin: 0;
+}
+.md-math.is-error {
+  color: #d9534f;
+}
+.editor-host .cm-line.md-math-display-line {
+  padding: 0.3em 0 !important;
+  text-align: center;
+}
+
+/* 代码块：围栏行换成工具栏，代码行保持真实文本 */
+.editor-host .cm-line.md-code-first {
+  background: var(--md-code-header-bg);
+  line-height: 1.5;
+  padding: 6px 14px !important;
+  border-radius: 8px 8px 0 0;
+}
+.editor-host .cm-line.md-code-line {
+  background: var(--md-code-bg);
+  font-family: var(--md-mono-font);
+  font-size: 0.88em;
+  line-height: 1.6;
+  padding: 0 14px !important;
+}
+.editor-host .cm-line.md-code-indented-first {
+  padding-top: 8px !important;
+  border-radius: 8px 8px 0 0;
+}
+.editor-host .cm-line.md-code-last {
+  border-radius: 0 0 8px 8px;
+  padding-bottom: 10px !important;
+}
+.editor-host .cm-line.md-code-first.md-code-last,
+.editor-host .cm-line.md-code-indented-first.md-code-last {
+  border-radius: 8px;
+}
+.markdown-body .cm-line.md-code-line .md-code,
+.markdown-body .cm-line.md-code-first .md-code {
+  padding: 0;
+  background: none;
+  font-size: 1em;
+}
+
+/* 关闭围栏所在行折叠为 0 高 */
+.editor-host .cm-line.md-hidden-line {
+  height: 0 !important;
+  min-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+.md-code-lineno {
+  display: inline-block;
+  width: 2.2em;
+  margin-right: 0.9em;
+  color: var(--meta-content-color);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+  text-align: right;
+  user-select: none;
+}
+
+.md-code-header {
+  display: inline-flex;
+  width: 100%;
+  box-sizing: border-box;
+  vertical-align: top;
+  align-items: center;
+  gap: 10px;
+  height: 26px;
+  color: var(--control-text-color);
+  font-family: var(--md-font-family);
+  font-size: 12px;
+  line-height: 26px;
+  user-select: none;
+}
+.md-code-lang {
+  appearance: none;
+  max-width: 220px;
+  padding: 1px 6px;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.md-code-lang:hover,
+.md-code-lang:focus-visible {
+  background: var(--ui-hover);
+  color: var(--control-text-hover-color);
+}
+.md-code-copy {
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.md-code-copy:hover,
+.md-code-copy:focus-visible {
+  background: var(--ui-hover);
+  color: var(--control-text-hover-color);
+  opacity: 1;
+}
+.md-code-copy.is-done {
+  color: var(--primary-color);
+  opacity: 1;
+}
+
+/* Mermaid 图表 */
+.md-mermaid-widget {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  padding: 0.5em 0;
+  cursor: pointer;
+}
+
+.md-mermaid-stage {
+  display: flex;
+  justify-content: center;
+  min-height: 40px;
+  overflow-x: auto;
+}
+
+.md-mermaid-stage svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.md-mermaid-status {
+  padding: 10px;
+  color: var(--meta-content-color);
+  font-size: 12.5px;
+  text-align: center;
+}
+
+.md-mermaid-error {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px dashed #d9534f;
+  border-radius: 6px;
+  background: rgba(217, 83, 79, 0.06);
+  color: #d9534f;
+  text-align: left;
+}
+
+.md-mermaid-error__title {
+  margin-bottom: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.md-mermaid-error__detail {
+  max-height: 92px;
+  margin: 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--md-mono-font);
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+.md-mermaid-error__hint {
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* 表格 */
+.md-table-widget {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  position: relative;
+  margin: 0.5em 0;
+}
+.md-table-scroll {
+  overflow-x: auto;
+}
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+  line-height: 1.55;
+}
+.markdown-body th,
+.markdown-body td {
+  padding: 6px 12px;
+  border: 1px solid var(--md-table-border);
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+}
+.markdown-body th {
+  background: var(--md-code-bg);
+  font-weight: 600;
+}
+.md-table .md-table-align-left {
+  text-align: left;
+}
+.md-table .md-table-align-center {
+  text-align: center;
+}
+.md-table .md-table-align-right {
+  text-align: right;
+}
+
+/* 悬停/聚焦时才出现的表格工具栏 */
+.md-table-toolbar {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  gap: 2px;
+  padding: 3px 5px;
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+  background: var(--bg-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease;
+}
+.md-table-widget:hover .md-table-toolbar,
+.md-table-toolbar:focus-within {
+  opacity: 1;
+  visibility: visible;
+}
+.md-table-btn {
+  height: 22px;
+  padding: 0 7px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--control-text-color);
+  font: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.md-table-btn:hover:not(:disabled),
+.md-table-btn:focus-visible {
+  background: var(--ui-hover);
+  color: var(--control-text-hover-color);
+}
+.md-table-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}

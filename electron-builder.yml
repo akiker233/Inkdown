@@ -1,0 +1,63 @@
+appId: com.inkdown.app
+productName: Inkdown
+copyright: Copyright © 2026 Inkdown Contributors
+
+directories:
+  buildResources: build
+  output: release
+
+files:
+  - out/**/*
+  - package.json
+
+asar: true
+
+extraResources:
+  - from: LICENSE
+    to: LICENSE
+  - from: build/icon-window.png
+    to: icon.png
+
+electronLanguages:
+  - en-US
+  - zh-CN
+  - zh-TW
+
+win:
+  icon: build/icon.ico
+  executableName: Inkdown
+  requestedExecutionLevel: asInvoker
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+
+fileAssociations:
+  - ext:
+      - md
+      - markdown
+      - mdown
+      - mkd
+      - mdx
+    name: Markdown Document
+    description: Markdown document
+    role: Editor
+    icon: build/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Inkdown
+  uninstallDisplayName: ${productName} ${version}
+  artifactName: ${productName}-Setup-${version}-${arch}.${ext}
+
+portable:
+  requestExecutionLevel: user
+  artifactName: ${productName}-Portable-${version}-${arch}.${ext}

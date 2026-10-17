@@ -1,0 +1,18 @@
+node_modules/
+out/
+dist/
+release*/
+
+.tmp/
+.qoder-credits/
+*.log
+.DS_Store
+Thumbs.db
+.vite/
+*.tsbuildinfo
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# 开发辅助脚本产出的截图
+shot*.png
