@@ -64,6 +64,8 @@ interface EditorStore {
   workspace: WorkspaceState
   sidebarVisible: boolean
   sidebarView: SidebarView
+  menuBarVisible: boolean
+  formatToolbarVisible: boolean
   focusMode: boolean
   typewriter: boolean
   autoSave: boolean
@@ -99,6 +101,10 @@ interface EditorStore {
   toggleSidebar: () => void
   setSidebarView: (view: SidebarView) => void
   toggleOutline: () => void
+  toggleMenuBar: () => void
+  setMenuBarVisible: (enabled: boolean) => void
+  toggleFormatToolbar: () => void
+  setFormatToolbarVisible: (enabled: boolean) => void
   toggleSourceMode: () => void
   toggleFocusMode: () => void
   toggleTypewriter: () => void
@@ -309,6 +315,8 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     workspace: { root: null, tree: null, watchId: null, loading: false },
     sidebarVisible: true,
     sidebarView: 'files',
+    menuBarVisible: true,
+    formatToolbarVisible: true,
     focusMode: false,
     typewriter: false,
     autoSave: true,
@@ -341,6 +349,8 @@ export const useEditorStore = create<EditorStore>((set, get) => {
             autoSave: settings.autoSave,
             autoSaveDelay: settings.autoSaveDelay,
             sidebarVisible: settings.sidebarVisible,
+            menuBarVisible: settings.menuBarVisible,
+            formatToolbarVisible: settings.formatToolbarVisible,
             recentFiles: settings.recentFiles,
             systemDark: window.matchMedia('(prefers-color-scheme: dark)').matches
           })
@@ -627,6 +637,24 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       }
       set({ sidebarView: 'outline', sidebarVisible: true })
       void window.api.app.patchSettings({ sidebarVisible: true })
+    },
+
+    toggleMenuBar: () => {
+      get().setMenuBarVisible(!get().menuBarVisible)
+    },
+
+    setMenuBarVisible: (enabled) => {
+      set({ menuBarVisible: enabled })
+      void window.api.app.patchSettings({ menuBarVisible: enabled })
+    },
+
+    toggleFormatToolbar: () => {
+      get().setFormatToolbarVisible(!get().formatToolbarVisible)
+    },
+
+    setFormatToolbarVisible: (enabled) => {
+      set({ formatToolbarVisible: enabled })
+      void window.api.app.patchSettings({ formatToolbarVisible: enabled })
     },
 
     toggleSourceMode: () => {

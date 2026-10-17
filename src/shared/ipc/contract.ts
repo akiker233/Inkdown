@@ -1,7 +1,8 @@
 import type { CloseConfirm, Enc, Eol, FileReadResult, FileWriteResult } from '../types/document'
-import type { AppMenuItem } from '../types/menu'
+import type { AppMenuItem, AppMenuViewState } from '../types/menu'
 import type { ExportCapabilities, ExportFormat, ExportPayload, ExportResult } from '../types/export'
 import type { RecoverySnapshot, TreeNode } from '../types/workspace'
+import type { UpdateCheckResult } from '../types/update'
 
 /**
  * IPC 唯一契约真源。
@@ -78,10 +79,12 @@ export type IpcContract = {
   }
   /** 自绘菜单栏直接复用原生菜单模板，保证入口完全一致 */
   'app:getMenu': { req: Record<string, never>; res: AppMenuItem[] }
+  /** 同步视图开关，菜单据此显示勾选标记 */
+  'app:syncMenuViewState': { req: Partial<AppMenuViewState>; res: void }
   /** 剪切/复制/粘贴需要主进程的 webContents 能力 */
   'app:editAction': { req: { action: 'cut' | 'copy' | 'paste' }; res: void }
   'app:zoom': { req: { direction: 'in' | 'out' | 'reset' }; res: number }
-  'app:checkUpdates': { req: Record<string, never>; res: void }
+  'app:checkUpdates': { req: { silent?: boolean }; res: UpdateCheckResult }
 
   // ── 文件关联 ──
   'fileAssoc:get': { req: Record<string, never>; res: FileAssociationState }
@@ -142,9 +145,13 @@ export interface AppSettings {
   /** 停止输入多久后自动保存（毫秒） */
   autoSaveDelay: number
   sidebarVisible: boolean
-  /** 自动更新默认关闭；开启后需同时配置 updateFeedUrl 或 INKDOWN_UPDATE_URL */
+  menuBarVisible: boolean
+  formatToolbarVisible: boolean
+  /** 启动时自动检查更新，默认关闭 */
   autoUpdate: boolean
-  /** generic 更新源地址（latest.yml 所在目录） */
+  /** 已忽略的更新版本，避免启动时反复提示同一版本 */
+  dismissedUpdateVersion: string | null
+  /** 自定义 generic 更新源地址（latest.yml 所在目录）；留空则使用 GitHub Releases */
   updateFeedUrl: string | null
   /** 是否在 Markdown 文件右键菜单显示“使用 Inkdown 打开” */
   markdownContextMenu: boolean

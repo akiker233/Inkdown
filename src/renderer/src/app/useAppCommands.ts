@@ -12,6 +12,7 @@ import {
   setHeading,
   selectAllCommand,
   toggleBold,
+  toggleHighlight,
   toggleInlineCode,
   toggleItalic,
   toggleList,
@@ -169,6 +170,9 @@ export async function executeMenuCommand(command: MenuCommandId): Promise<void> 
     case 'format.strike':
       toggleStrike()
       break
+    case 'format.highlight':
+      toggleHighlight()
+      break
     case 'format.inlineCode':
       toggleInlineCode()
       break
@@ -183,6 +187,12 @@ export async function executeMenuCommand(command: MenuCommandId): Promise<void> 
       break
     case 'view.toggleOutline':
       store.toggleOutline()
+      break
+    case 'view.toggleMenuBar':
+      store.toggleMenuBar()
+      break
+    case 'view.toggleFormatToolbar':
+      store.toggleFormatToolbar()
       break
     case 'view.sourceCode':
       store.toggleSourceMode()

@@ -25,6 +25,7 @@ export type MenuCommandId =
   | 'format.bold'
   | 'format.italic'
   | 'format.strike'
+  | 'format.highlight'
   | 'format.inlineCode'
   | 'format.codeBlock'
   | 'format.hyperlink'
@@ -50,6 +51,8 @@ export type MenuCommandId =
   | 'view.fullscreen'
   | 'view.toggleSidebar'
   | 'view.toggleOutline'
+  | 'view.toggleMenuBar'
+  | 'view.toggleFormatToolbar'
   | 'view.resetZoom'
   | 'view.zoomIn'
   | 'view.zoomOut'
@@ -62,6 +65,17 @@ export type MenuCommandId =
   | 'app.preferences'
   | 'app.about'
   | 'help.checkUpdates'
+
+/** 渲染进程同步给主进程的视图开关状态，用于菜单勾选标记 */
+export interface AppMenuViewState {
+  sourceMode: boolean
+  focusMode: boolean
+  typewriter: boolean
+  sidebarVisible: boolean
+  sidebarView: 'files' | 'outline'
+  menuBarVisible: boolean
+  formatToolbarVisible: boolean
+}
 
 /** 主进程菜单模板的只读序列化结果，供自绘菜单栏渲染 */
 export interface AppMenuItem {

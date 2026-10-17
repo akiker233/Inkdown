@@ -49,6 +49,7 @@ export const CH = {
   appSetOpenPaths: 'app:setOpenPaths',
   appConsumeLaunchTargets: 'app:consumeLaunchTargets',
   appGetMenu: 'app:getMenu',
+  appSyncMenuViewState: 'app:syncMenuViewState',
   appEditAction: 'app:editAction',
   appZoom: 'app:zoom',
   appCheckUpdates: 'app:checkUpdates',

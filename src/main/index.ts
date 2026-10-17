@@ -87,7 +87,11 @@ if (!gotLock) {
 
     const bounds = await loadBounds()
     const win = createMainWindow(bounds)
-    buildAppMenu(win, settings.language, settings.spellcheck)
+    buildAppMenu(win, settings.language, settings.spellcheck, {
+      sidebarVisible: settings.sidebarVisible,
+      menuBarVisible: settings.menuBarVisible,
+      formatToolbarVisible: settings.formatToolbarVisible
+    })
     void initAutoUpdate()
     void syncFileAssociations()
 

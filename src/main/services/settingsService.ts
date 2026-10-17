@@ -13,7 +13,10 @@ const BASE_DEFAULTS: Omit<AppSettings, 'language'> = {
   autoSave: true,
   autoSaveDelay: 800,
   sidebarVisible: true,
+  menuBarVisible: true,
+  formatToolbarVisible: true,
   autoUpdate: false,
+  dismissedUpdateVersion: null,
   updateFeedUrl: null,
   markdownContextMenu: false
 }

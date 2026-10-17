@@ -1,0 +1,211 @@
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import type { MenuCommandId } from '@shared/types/menu'
+import { executeMenuCommand } from '../../app/useAppCommands'
+import {
+  BulletListIcon,
+  CodeBlockIcon,
+  HighlighterIcon,
+  HrIcon,
+  ImageIcon,
+  InlineCodeIcon,
+  LinkIcon,
+  MoreIcon,
+  OrderedListIcon,
+  QuoteIcon,
+  RedoIcon,
+  TableIcon,
+  TaskListIcon,
+  UndoIcon
+} from '../../components/icons'
+import { useI18n } from '../../i18n'
+
+interface ToolButtonProps {
+  label: string
+  onClick: () => void
+  children: ReactNode
+  className?: string
+}
+
+/** 按下时阻止默认行为，避免编辑器失焦丢掉选区 */
+function ToolButton({ label, onClick, children, className }: ToolButtonProps) {
+  return (
+    <button
+      type="button"
+      className={className ? `format-btn ${className}` : 'format-btn'}
+      title={label}
+      aria-label={label}
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function FormatToolbar() {
+  const { t } = useI18n()
+  const [moreOpen, setMoreOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!moreOpen) return
+    const onPointerDown = (event: PointerEvent): void => {
+      if (!rootRef.current?.contains(event.target as Node)) setMoreOpen(false)
+    }
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') setMoreOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [moreOpen])
+
+  const run = (command: MenuCommandId) => (): void => {
+    setMoreOpen(false)
+    void executeMenuCommand(command)
+  }
+
+  const moreItems: Array<{ command: MenuCommandId; label: string } | 'separator'> = [
+    { command: 'paragraph.heading4', label: t('toolbar.h4') },
+    { command: 'paragraph.heading5', label: t('toolbar.h5') },
+    { command: 'paragraph.heading6', label: t('toolbar.h6') },
+    { command: 'paragraph.paragraph', label: t('toolbar.paragraph') },
+    'separator',
+    { command: 'paragraph.mathBlock', label: t('toolbar.mathBlock') }
+  ]
+
+  return (
+    <div className="format-toolbar" role="toolbar" aria-label={t('toolbar.label')} ref={rootRef}>
+      <div className="format-toolbar__group">
+        <ToolButton label={t('toolbar.image')} onClick={run('format.image')}>
+          <ImageIcon size={16} />
+        </ToolButton>
+      </div>
+
+      <span className="format-toolbar__sep" aria-hidden="true" />
+
+      <div className="format-toolbar__group">
+        <ToolButton
+          label={t('toolbar.h1')}
+          className="format-btn--text"
+          onClick={run('paragraph.heading1')}
+        >
+          H1
+        </ToolButton>
+        <ToolButton
+          label={t('toolbar.h2')}
+          className="format-btn--text"
+          onClick={run('paragraph.heading2')}
+        >
+          H2
+        </ToolButton>
+        <ToolButton
+          label={t('toolbar.h3')}
+          className="format-btn--text"
+          onClick={run('paragraph.heading3')}
+        >
+          H3
+        </ToolButton>
+      </div>
+
+      <span className="format-toolbar__sep" aria-hidden="true" />
+
+      <div className="format-toolbar__group">
+        <ToolButton label={t('toolbar.bold')} onClick={run('format.bold')}>
+          <span className="format-btn__bold">B</span>
+        </ToolButton>
+        <ToolButton label={t('toolbar.italic')} onClick={run('format.italic')}>
+          <span className="format-btn__italic">I</span>
+        </ToolButton>
+        <ToolButton label={t('toolbar.strike')} onClick={run('format.strike')}>
+          <span className="format-btn__strike">S</span>
+        </ToolButton>
+        <ToolButton label={t('toolbar.highlight')} onClick={run('format.highlight')}>
+          <HighlighterIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.inlineCode')} onClick={run('format.inlineCode')}>
+          <InlineCodeIcon size={16} />
+        </ToolButton>
+      </div>
+
+      <span className="format-toolbar__sep" aria-hidden="true" />
+
+      <div className="format-toolbar__group">
+        <ToolButton label={t('toolbar.taskList')} onClick={run('paragraph.taskList')}>
+          <TaskListIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.bulletList')} onClick={run('paragraph.bulletList')}>
+          <BulletListIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.orderedList')} onClick={run('paragraph.orderedList')}>
+          <OrderedListIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.quote')} onClick={run('paragraph.quote')}>
+          <QuoteIcon size={16} />
+        </ToolButton>
+      </div>
+
+      <span className="format-toolbar__sep" aria-hidden="true" />
+
+      <div className="format-toolbar__group">
+        <ToolButton label={t('toolbar.link')} onClick={run('format.hyperlink')}>
+          <LinkIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.table')} onClick={run('paragraph.table')}>
+          <TableIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.codeBlock')} onClick={run('paragraph.codeFence')}>
+          <CodeBlockIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.hr')} onClick={run('paragraph.hr')}>
+          <HrIcon size={16} />
+        </ToolButton>
+      </div>
+
+      <div className="format-toolbar__group format-toolbar__group--history">
+        <ToolButton label={t('toolbar.undo')} onClick={run('edit.undo')}>
+          <UndoIcon size={16} />
+        </ToolButton>
+        <ToolButton label={t('toolbar.redo')} onClick={run('edit.redo')}>
+          <RedoIcon size={16} />
+        </ToolButton>
+      </div>
+
+      <div className="format-toolbar__more">
+        <ToolButton
+          label={t('toolbar.more')}
+          className={moreOpen ? 'is-open' : undefined}
+          onClick={() => setMoreOpen((open) => !open)}
+        >
+          <MoreIcon size={16} />
+        </ToolButton>
+        {moreOpen ? (
+          <div className="format-toolbar__menu" role="menu">
+            {moreItems.map((item, index) =>
+              item === 'separator' ? (
+                <div key={index} className="format-toolbar__menu-sep" role="separator" />
+              ) : (
+                <button
+                  key={item.command}
+                  type="button"
+                  role="menuitem"
+                  className="format-toolbar__menu-item"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => {
+                    setMoreOpen(false)
+                    void executeMenuCommand(item.command)
+                  }}
+                >
+                  {item.label}
+                </button>
+              )
+            )}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  )
+}

@@ -327,6 +327,10 @@ export function toggleStrike(): boolean {
   return toggleWrap('~~')
 }
 
+export function toggleHighlight(): boolean {
+  return toggleWrap('==')
+}
+
 export function toggleInlineCode(): boolean {
   return toggleWrap('`')
 }

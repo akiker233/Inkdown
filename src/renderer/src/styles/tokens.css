@@ -61,6 +61,7 @@
   /* === 应用外壳 token === */
   --ui-titlebar-h: 36px;
   --ui-menubar-h: 30px;
+  --ui-toolbar-h: 34px;
   --ui-statusbar-h: 26px;
   --ui-bg: var(--bg-color);
   --ui-fg: var(--text-color);

@@ -78,9 +78,10 @@ const api: InkdownApi = {
     setOpenPaths: (paths: string[]) => invoke('app:setOpenPaths', { paths }),
     consumeLaunchTargets: () => invoke('app:consumeLaunchTargets', NONE),
     getMenu: () => invoke('app:getMenu', NONE),
+    syncMenuViewState: (state) => invoke('app:syncMenuViewState', state),
     editAction: (action) => invoke('app:editAction', { action }),
     zoom: (direction) => invoke('app:zoom', { direction }),
-    checkUpdates: () => invoke('app:checkUpdates', NONE)
+    checkUpdates: (options) => invoke('app:checkUpdates', options ?? {})
   },
   fileAssoc: {
     get: () => invoke('fileAssoc:get', NONE),

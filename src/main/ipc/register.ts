@@ -11,7 +11,7 @@ import { getSettings, patchSettings } from '../services/settingsService'
 import { checkForUpdates } from '../services/updateService'
 import { setDocumentDirty } from '../window/closeGuard'
 import { getMainWindow } from '../window/mainWindow'
-import { buildAppMenu, serializeAppMenu } from '../window/menu'
+import { buildAppMenu, serializeAppMenu, syncAppMenuViewState } from '../window/menu'
 import { registerAssetHandlers } from './asset.handlers'
 import { registerDialogHandlers } from './dialog.handlers'
 import { registerExportHandlers } from './export.handlers'
@@ -52,8 +52,17 @@ export function registerAllHandlers(): void {
     const next = await patchSettings(patch)
     if (patch.theme) nativeTheme.themeSource = patch.theme
     const win = getMainWindow()
-    if (win && (patch.language !== undefined || patch.spellcheck !== undefined)) {
-      buildAppMenu(win, next.language, next.spellcheck)
+    if (
+      win &&
+      (patch.language !== undefined ||
+        patch.spellcheck !== undefined ||
+        patch.menuBarVisible !== undefined ||
+        patch.formatToolbarVisible !== undefined)
+    ) {
+      buildAppMenu(win, next.language, next.spellcheck, {
+        menuBarVisible: next.menuBarVisible,
+        formatToolbarVisible: next.formatToolbarVisible
+      })
     }
     if (patch.language !== undefined && next.markdownContextMenu) {
       // 右键菜单文案跟随界面语言
@@ -73,6 +82,8 @@ export function registerAllHandlers(): void {
   })
 
   handle(CH.appGetMenu, () => serializeAppMenu())
+
+  handle(CH.appSyncMenuViewState, (state) => syncAppMenuViewState(state))
 
   handle(CH.appEditAction, ({ action }) => {
     const contents = getMainWindow()?.webContents
@@ -94,5 +105,5 @@ export function registerAllHandlers(): void {
     return next
   })
 
-  handle(CH.appCheckUpdates, () => checkForUpdates({ manual: true }))
+  handle(CH.appCheckUpdates, ({ silent }) => checkForUpdates({ manual: true, silent }))
 }

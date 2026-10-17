@@ -2,10 +2,22 @@ import { Menu, type BrowserWindow, type MenuItemConstructorOptions } from 'elect
 import type { AppLanguage } from '@shared/ipc/contract'
 import { CH } from '@shared/ipc/channels'
 import { mainT } from '../i18n'
-import type { AppMenuItem, MenuCommandId } from '@shared/types/menu'
+import type { AppMenuItem, AppMenuViewState, MenuCommandId } from '@shared/types/menu'
 import { checkForUpdates } from '../services/updateService'
 
 let lastTemplate: MenuItemConstructorOptions[] = []
+let lastWin: BrowserWindow | null = null
+let lastLanguage: AppLanguage = 'zh'
+let lastSpellcheck = true
+let lastViewState: AppMenuViewState = {
+  sourceMode: false,
+  focusMode: false,
+  typewriter: false,
+  sidebarVisible: true,
+  sidebarView: 'files',
+  menuBarVisible: true,
+  formatToolbarVisible: true
+}
 
 /**
  * 菜单只作为快捷键与命令的入口：frameless 窗口不显示原生菜单栏，
@@ -15,8 +27,15 @@ let lastTemplate: MenuItemConstructorOptions[] = []
 export function buildAppMenu(
   win: BrowserWindow,
   language: AppLanguage,
-  spellcheck: boolean
+  spellcheck: boolean,
+  viewState?: Partial<AppMenuViewState>
 ): void {
+  lastWin = win
+  lastLanguage = language
+  lastSpellcheck = spellcheck
+  if (viewState) lastViewState = { ...lastViewState, ...viewState }
+  const view = lastViewState
+
   const label = (key: Parameters<typeof mainT>[1]): string => mainT(language, key)
   const cmd = (
     text: string,
@@ -27,6 +46,16 @@ export function buildAppMenu(
     label: text,
     accelerator,
     click: () => win.webContents.send(CH.eventMenuCommand, { command })
+  })
+  const toggle = (
+    text: string,
+    command: MenuCommandId,
+    checked: boolean,
+    accelerator?: string
+  ): MenuItemConstructorOptions => ({
+    ...cmd(text, command, accelerator),
+    type: 'checkbox',
+    checked
   })
 
   const template: MenuItemConstructorOptions[] = [
@@ -111,6 +140,7 @@ export function buildAppMenu(
         cmd(label('menu.bold'), 'format.bold', 'CmdOrCtrl+B'),
         cmd(label('menu.italic'), 'format.italic', 'CmdOrCtrl+I'),
         cmd(label('menu.strike'), 'format.strike', 'Alt+Shift+5'),
+        cmd(label('menu.highlight'), 'format.highlight'),
         cmd(label('menu.inlineCode'), 'format.inlineCode', 'CmdOrCtrl+Shift+`'),
         cmd(label('menu.hyperlink'), 'format.hyperlink', 'CmdOrCtrl+K'),
         cmd(label('menu.image'), 'format.image', 'CmdOrCtrl+Shift+I')
@@ -119,13 +149,25 @@ export function buildAppMenu(
     {
       label: label('menu.view'),
       submenu: [
-        cmd(label('menu.sourceCode'), 'view.sourceCode', 'CmdOrCtrl+/'),
+        toggle(label('menu.sourceCode'), 'view.sourceCode', view.sourceMode, 'CmdOrCtrl+/'),
         { type: 'separator' },
-        cmd(label('menu.focusMode'), 'view.focusMode', 'F8'),
-        cmd(label('menu.typewriter'), 'view.typewriter', 'F9'),
+        toggle(label('menu.focusMode'), 'view.focusMode', view.focusMode, 'F8'),
+        toggle(label('menu.typewriter'), 'view.typewriter', view.typewriter, 'F9'),
         { type: 'separator' },
-        cmd(label('menu.sidebar'), 'view.toggleSidebar', 'CmdOrCtrl+Shift+L'),
-        cmd(label('menu.outline'), 'view.toggleOutline', 'CmdOrCtrl+Shift+1'),
+        toggle(label('menu.sidebar'), 'view.toggleSidebar', view.sidebarVisible, 'CmdOrCtrl+Shift+L'),
+        toggle(
+          label('menu.outline'),
+          'view.toggleOutline',
+          view.sidebarVisible && view.sidebarView === 'outline',
+          'CmdOrCtrl+Shift+1'
+        ),
+        { type: 'separator' },
+        toggle(label('menu.menuBar'), 'view.toggleMenuBar', view.menuBarVisible),
+        toggle(
+          label('menu.formatToolbar'),
+          'view.toggleFormatToolbar',
+          view.formatToolbarVisible
+        ),
         { type: 'separator' },
         cmd(label('menu.zoomIn'), 'view.zoomIn', 'CmdOrCtrl+Shift+='),
         cmd(label('menu.zoomOut'), 'view.zoomOut', 'CmdOrCtrl+Shift+-'),
@@ -180,6 +222,13 @@ export function buildAppMenu(
 
   lastTemplate = template
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+}
+
+/** 视图状态变化后重建菜单，让勾选标记与当前界面一致 */
+export function syncAppMenuViewState(patch: Partial<AppMenuViewState>): void {
+  lastViewState = { ...lastViewState, ...patch }
+  if (!lastWin || lastWin.isDestroyed()) return
+  buildAppMenu(lastWin, lastLanguage, lastSpellcheck)
 }
 
 /** 把当前模板序列化给渲染进程的自绘菜单栏；label 已按当前语言生成 */

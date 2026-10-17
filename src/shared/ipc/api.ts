@@ -3,6 +3,8 @@ import type { IpcEvents } from './events'
 import type { Enc, Eol } from '../types/document'
 import type { ExportPayload } from '../types/export'
 import type { RecoverySnapshot, TreeNode } from '../types/workspace'
+import type { UpdateCheckResult } from '../types/update'
+import type { AppMenuViewState } from '../types/menu'
 
 type Req<K extends keyof IpcContract> = IpcContract[K]['req']
 type Res<K extends keyof IpcContract> = IpcContract[K]['res']
@@ -61,9 +63,11 @@ export interface InkdownApi {
     setOpenPaths: (paths: string[]) => Promise<void>
     consumeLaunchTargets: () => Promise<Res<'app:consumeLaunchTargets'>>
     getMenu: () => Promise<Res<'app:getMenu'>>
+    syncMenuViewState: (state: Partial<AppMenuViewState>) => Promise<void>
     editAction: (action: Req<'app:editAction'>['action']) => Promise<void>
     zoom: (direction: Req<'app:zoom'>['direction']) => Promise<number>
-    checkUpdates: () => Promise<void>
+    /** silent 为 true 时只返回结果，不弹出原生对话框 */
+    checkUpdates: (options?: Req<'app:checkUpdates'>) => Promise<UpdateCheckResult>
   }
   fileAssoc: {
     get: () => Promise<Res<'fileAssoc:get'>>
