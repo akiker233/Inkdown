@@ -200,6 +200,8 @@ export async function getFileAssociationState(): Promise<FileAssociationState> {
 
 export async function setContextMenu(enabled: boolean): Promise<FileAssociationState> {
   if (supportReason()) throw new Error('当前版本不支持注册文件关联')
+  // 启动同步可能仍在刷新旧关联，先等它结束，避免把用户刚做的修改再次覆盖掉
+  await syncTask
   await applyContextMenu(enabled)
   await patchSettings({ markdownContextMenu: enabled })
   return getFileAssociationState()
@@ -207,13 +209,15 @@ export async function setContextMenu(enabled: boolean): Promise<FileAssociationS
 
 export async function openDefaultAppsSettings(): Promise<FileAssociationState> {
   if (supportReason()) throw new Error('当前版本不支持注册文件关联')
+  await syncTask
   await registerProgId()
   await shell.openExternal('ms-settings:defaultapps?registeredAppUser=Inkdown')
   return getFileAssociationState()
 }
 
-/** 启动时让注册表状态与设置一致；语言变化后也调用它刷新右键菜单文案 */
-export async function syncFileAssociations(): Promise<void> {
+let syncTask: Promise<void> | null = null
+
+async function runSync(): Promise<void> {
   if (supportReason()) return
   const settings = await getSettings()
   const registered = await isRegistered()
@@ -227,4 +231,12 @@ export async function syncFileAssociations(): Promise<void> {
   } else if (current) {
     await applyContextMenu(false)
   }
+}
+
+/** 启动时让注册表状态与设置一致；语言变化后也调用它刷新右键菜单文案 */
+export function syncFileAssociations(): Promise<void> {
+  syncTask ??= runSync().finally(() => {
+    syncTask = null
+  })
+  return syncTask
 }
