@@ -83,6 +83,10 @@ function executablePath(): string {
   return process.execPath
 }
 
+function markdownIconPath(): string {
+  return join(process.resourcesPath, 'icon-md.ico')
+}
+
 function contextMenuKey(ext: string): string {
   return `HKCU\\Software\\Classes\\SystemFileAssociations\\${ext}\\shell\\Inkdown`
 }
@@ -110,10 +114,18 @@ async function contextMenuLabel(): Promise<string> {
   return language === 'en' ? 'Open with Inkdown' : '使用 Inkdown 打开'
 }
 
+async function associationNeedsRefresh(): Promise<boolean> {
+  const icon = await readDefault(`HKCU\\Software\\Classes\\${PROG_ID}\\DefaultIcon`)
+  const command = await readDefault(`HKCU\\Software\\Classes\\${PROG_ID}\\shell\\open\\command`)
+  return (
+    icon !== `"${markdownIconPath()}",0` || command !== `"${executablePath()}" "%1"`
+  )
+}
+
 async function applyContextMenu(enabled: boolean, label?: string): Promise<void> {
   const exe = executablePath()
   const command = `"${exe}" "%1"`
-  const icon = `"${exe}",0`
+  const icon = `"${markdownIconPath()}",0`
   const text = label ?? (await contextMenuLabel())
 
   for (const ext of EXTENSIONS) {
@@ -132,16 +144,17 @@ async function applyContextMenu(enabled: boolean, label?: string): Promise<void>
 async function registerProgId(): Promise<void> {
   const exe = executablePath()
   const command = `"${exe}" "%1"`
-  const icon = `"${exe}",0`
+  const appIcon = `"${exe}",0`
+  const fileIcon = `"${markdownIconPath()}",0`
   const appKey = `HKCU\\Software\\Classes\\Applications\\${basename(exe)}`
 
   await addValue(`HKCU\\Software\\Classes\\${PROG_ID}`, null, 'Markdown Document')
-  await addValue(`HKCU\\Software\\Classes\\${PROG_ID}\\DefaultIcon`, null, icon)
+  await addValue(`HKCU\\Software\\Classes\\${PROG_ID}\\DefaultIcon`, null, fileIcon)
   await addValue(`HKCU\\Software\\Classes\\${PROG_ID}\\shell\\open\\command`, null, command)
 
   await addValue(appKey, null, 'Inkdown')
   await addValue(`${appKey}\\FriendlyAppName`, null, 'Inkdown')
-  await addValue(`${appKey}\\ApplicationIcon`, null, icon)
+  await addValue(`${appKey}\\ApplicationIcon`, null, appIcon)
   await addValue(`${appKey}\\shell\\open\\command`, null, command)
   for (const ext of EXTENSIONS) {
     await addValue(`${appKey}\\SupportedTypes\\${ext}`, null, '')
@@ -150,7 +163,7 @@ async function registerProgId(): Promise<void> {
 
   await addValue(CAPABILITIES_KEY, 'ApplicationName', 'Inkdown')
   await addValue(CAPABILITIES_KEY, 'ApplicationDescription', 'Inkdown Markdown Editor')
-  await addValue(CAPABILITIES_KEY, 'ApplicationIcon', icon)
+  await addValue(CAPABILITIES_KEY, 'ApplicationIcon', appIcon)
   for (const ext of EXTENSIONS) {
     await addValue(`${CAPABILITIES_KEY}\\FileAssociations\\${ext}`, null, PROG_ID)
   }
@@ -203,6 +216,11 @@ export async function openDefaultAppsSettings(): Promise<FileAssociationState> {
 export async function syncFileAssociations(): Promise<void> {
   if (supportReason()) return
   const settings = await getSettings()
+  const registered = await isRegistered()
+  if (registered && (await associationNeedsRefresh())) {
+    await registerProgId()
+  }
+
   const current = await contextMenuEnabled()
   if (settings.markdownContextMenu) {
     await applyContextMenu(true)

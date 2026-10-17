@@ -89,7 +89,9 @@ Inkdown 是一款面向 Windows 的桌面 Markdown 编辑器，目标是在本�
 
 系统要求：Windows 10 / 11 x64。
 
-> 安装包未使用商业代码签名证书，Windows SmartScreen 可能提示“未知发布者”。校验值随每个 Release 一同发布。
+发布流水线支持由 [SignPath.io](https://signpath.io/) 提供的免费代码签名，证书由 [SignPath Foundation](https://signpath.org/) 提供；在签名凭据配置完成前，安装包仍为未签名状态，Windows SmartScreen 可能提示“未知发布者”。校验值随每个 Release 一同发布。
+
+签名配置与本地验证方法见 [docs/SIGNING.md](docs/SIGNING.md)。
 
 ## 常用快捷键
 
@@ -157,9 +159,10 @@ npm run dev
 | `npm test` | 运行 Vitest 单元测试 |
 | `npm run build` | 类型检查并构建到 `out/` |
 | `npm run e2e` | 构建后运行开发版端到端测试 |
-| `npm run dist` | 构建并生成 Windows 安装包到 `release/` |
+| `npm run dist` | 构建并生成 Windows 安装包到 `releases/<version>/` |
 | `npm run e2e:packaged` | 运行打包版端到端测试 |
 | `npm run icon` | 重新生成应用图标 |
+| `npm run icon:md` | 重新生成 Markdown 文件图标 |
 | `npm run logo` | 重新生成品牌 Logo |
 
 提交代码前请至少运行 `npm run typecheck`、`npm test` 和 `npm run e2e`。详细约定见 [CONTRIBUTING.md](CONTRIBUTING.md)。

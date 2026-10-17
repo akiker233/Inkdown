@@ -36,6 +36,7 @@
     "e2e": "node scripts/e2e.mjs",
     "e2e:packaged": "node scripts/e2e.mjs --packaged",
     "icon": "electron scripts/make-icon.cjs",
+    "icon:md": "electron scripts/make-file-icon.cjs",
     "logo": "electron scripts/make-logo.cjs",
     "dist": "npm run build && electron-builder --win --publish never",
     "dist:dir": "npm run build && electron-builder --win dir --publish never"

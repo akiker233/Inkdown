@@ -2,7 +2,7 @@
  * 零依赖端到端冒烟测试：启动真实应用 → 用 argv 打开 Markdown（模拟文件关联）
  * → 编辑 → Ctrl+S → 断言行盘 → 校验版本/平台/userData 隔离 → 退出。
  *
- * 默认跑构建后的开发版（out/）；`--packaged` 跑 release/win-unpacked/Inkdown.exe。
+ * 默认跑构建后的开发版（out/）；`--packaged` 跑 releases/<version>/win-unpacked/Inkdown.exe。
  * 可用 E2E_EXE 指定其它可执行文件。CI 里两条链路都会跑。
  */
 import { spawn, spawnSync } from 'node:child_process'
@@ -143,7 +143,7 @@ try {
   )
 
   const exe = packaged
-    ? process.env.E2E_EXE ?? join(root, 'release', 'win-unpacked', 'Inkdown.exe')
+    ? process.env.E2E_EXE ?? join(root, 'releases', pkg.version, 'win-unpacked', 'Inkdown.exe')
     : require('electron')
   if (packaged && !existsSync(exe)) {
     throw new Error(`未找到打包产物 ${exe}，请先运行 npm run dist:dir`)
@@ -285,10 +285,15 @@ try {
   if (!updateMenu) throw new Error('未找到“检查更新”菜单项')
   pass('自动更新默认关闭且“检查更新”入口存在')
 
-  const assoc = await renderer.evaluate('window.api.fileAssoc.get()')
+  let assoc = await renderer.evaluate('window.api.fileAssoc.get()')
   if (packaged) {
     if (!assoc.supported || assoc.reason !== null) {
       throw new Error(`安装版应支持文件关联：${JSON.stringify(assoc)}`)
+    }
+    // 升级后首次启动会在后台逐项刷新旧关联，注册表同步完成前不能断言默认状态
+    for (let i = 0; assoc.contextMenu && i < 20; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      assoc = await renderer.evaluate('window.api.fileAssoc.get()')
     }
     if (assoc.contextMenu) throw new Error('右键菜单不应默认开启')
 

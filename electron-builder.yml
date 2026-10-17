@@ -4,7 +4,7 @@ copyright: Copyright © 2026 Inkdown Contributors
 
 directories:
   buildResources: build
-  output: release
+  output: releases/${version}
 
 files:
   - out/**/*
@@ -17,6 +17,8 @@ extraResources:
     to: LICENSE
   - from: build/icon-window.png
     to: icon.png
+  - from: build/icon-md.ico
+    to: icon-md.ico
 
 electronLanguages:
   - en-US
@@ -27,6 +29,10 @@ win:
   icon: build/icon.ico
   executableName: Inkdown
   requestedExecutionLevel: asInvoker
+  signtoolOptions:
+    signingHashAlgorithms:
+      - sha256
+    rfc3161TimeStampServer: http://timestamp.digicert.com
   target:
     - target: nsis
       arch:
@@ -45,7 +51,7 @@ fileAssociations:
     name: Markdown Document
     description: Markdown document
     role: Editor
-    icon: build/icon.ico
+    icon: build/icon-md.ico
 
 nsis:
   oneClick: false

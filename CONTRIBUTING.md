@@ -30,8 +30,8 @@ npm run dev
 | `npm test` | 运行 Vitest 单元测试 |
 | `npm run build` | 类型检查并构建到 `out/` |
 | `npm run e2e` | 开发版端到端测试（需要先构建） |
-| `npm run dist:dir` | 生成未打包目录 `release/win-unpacked` |
-| `npm run dist` | 生成 Windows 安装包 |
+| `npm run dist:dir` | 生成未打包目录 `releases/<version>/win-unpacked` |
+| `npm run dist` | 生成 Windows 安装包到 `releases/<version>/` |
 | `npm run e2e:packaged` | 打包版端到端测试 |
 
 ## 代码约定
