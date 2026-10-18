@@ -89,9 +89,7 @@ Inkdown 是一款面向 Windows 的桌面 Markdown 编辑器，目标是在本�
 
 系统要求：Windows 10 / 11 x64。
 
-发布流水线支持由 [SignPath.io](https://signpath.io/) 提供的免费代码签名，证书由 [SignPath Foundation](https://signpath.org/) 提供；在签名凭据配置完成前，安装包仍为未签名状态，Windows SmartScreen 可能提示“未知发布者”。校验值随每个 Release 一同发布。
-
-签名配置与本地验证方法见 [docs/SIGNING.md](docs/SIGNING.md)。
+> 安装包未使用商业代码签名证书，Windows SmartScreen 可能提示“未知发布者”。校验值随每个 Release 一同发布。
 
 ## 常用快捷键
 
