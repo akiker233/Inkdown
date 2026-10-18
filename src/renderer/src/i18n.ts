@@ -47,7 +47,6 @@ const zh = {
   'toolbar.hr': '分割线',
   'toolbar.undo': '撤销 (Ctrl+Z)',
   'toolbar.redo': '重做 (Ctrl+Y)',
-  'toolbar.more': '更多',
 
   'welcome.tagline': '专注写作的 Markdown 编辑器',
   'welcome.new': '新建文档',
@@ -190,8 +189,11 @@ const zh = {
   'cmd.linkText': '链接文本',
 
   'about.title': '关于 Inkdown',
-  'about.message': 'Inkdown {version}',
+  'about.version': '版本 {version}',
   'about.detail': '专注写作的 Markdown 编辑器',
+  'about.repo': 'GitHub 仓库',
+  'about.openRepo': '在 GitHub 上打开',
+  'about.license': '基于 GPL-3.0 许可证发布',
 
   'prefs.title': '设置',
   'prefs.interfaceTitle': '界面',
@@ -315,7 +317,6 @@ const en: Record<MessageKey, string> = {
   'toolbar.hr': 'Horizontal rule',
   'toolbar.undo': 'Undo (Ctrl+Z)',
   'toolbar.redo': 'Redo (Ctrl+Y)',
-  'toolbar.more': 'More',
 
   'welcome.tagline': 'A Markdown editor built for focused writing',
   'welcome.new': 'New document',
@@ -458,8 +459,11 @@ const en: Record<MessageKey, string> = {
   'cmd.linkText': 'Link text',
 
   'about.title': 'About Inkdown',
-  'about.message': 'Inkdown {version}',
+  'about.version': 'Version {version}',
   'about.detail': 'A Markdown editor built for focused writing',
+  'about.repo': 'GitHub repository',
+  'about.openRepo': 'Open on GitHub',
+  'about.license': 'Released under the GPL-3.0 license',
 
   'prefs.title': 'Preferences',
   'prefs.interfaceTitle': 'Interface',

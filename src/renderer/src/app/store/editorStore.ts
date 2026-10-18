@@ -73,6 +73,7 @@ interface EditorStore {
   recentFiles: string[]
   paletteOpen: boolean
   preferencesOpen: boolean
+  aboutOpen: boolean
   searchOpen: boolean
   /** 查找面板是否展开替换行 */
   searchReplace: boolean
@@ -126,6 +127,7 @@ interface EditorStore {
 
   setPaletteOpen: (open: boolean) => void
   setPreferencesOpen: (open: boolean) => void
+  setAboutOpen: (open: boolean) => void
   openSearch: (replace?: boolean) => void
   closeSearch: () => void
   resolveRecovery: (accept: boolean) => Promise<void>
@@ -324,6 +326,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     recentFiles: [],
     paletteOpen: false,
     preferencesOpen: false,
+    aboutOpen: false,
     searchOpen: false,
     searchReplace: false,
     searchSeq: 0,
@@ -900,6 +903,8 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     setPaletteOpen: (open) => set({ paletteOpen: open }),
 
     setPreferencesOpen: (open) => set({ preferencesOpen: open }),
+
+    setAboutOpen: (open) => set({ aboutOpen: open }),
 
     openSearch: (replace = false) => {
       set({ searchOpen: true, searchReplace: replace, searchSeq: get().searchSeq + 1 })

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { resolveDark, useEditorStore } from './app/store/editorStore'
 import { useAppCommands } from './app/useAppCommands'
 import { MarkdownEditor } from './editor/MarkdownEditor'
+import { About } from './features/about/About'
 import { MenuBar } from './features/menubar/MenuBar'
 import { ConflictBanner } from './features/conflict/ConflictBanner'
 import { QuickOpen } from './features/palette/QuickOpen'
@@ -84,6 +85,7 @@ export function App() {
       <QuickOpen />
       <RecoveryPrompt />
       <Preferences />
+      <About />
     </div>
   )
 }

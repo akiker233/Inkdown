@@ -241,6 +241,39 @@ export function InlineCodeIcon(props: Props) {
   )
 }
 
+export function MathIcon(props: Props) {
+  return (
+    <Icon {...props}>
+      <path d="M17.5 5H7l5.5 7-5.5 7h10.5" />
+    </Icon>
+  )
+}
+
+export function ExternalLinkIcon(props: Props) {
+  return (
+    <Icon {...props}>
+      <path d="M14 4h6v6" />
+      <path d="M20 4 11 13" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    </Icon>
+  )
+}
+
+export function GitHubIcon({ size = 16, ...rest }: Props) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      {...rest}
+    >
+      <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
+    </svg>
+  )
+}
+
 export function HrIcon(props: Props) {
   return (
     <Icon {...props}>
@@ -264,16 +297,6 @@ export function RedoIcon(props: Props) {
     <Icon {...props}>
       <path d="m15 14 5-5-5-5" />
       <path d="M20 9H10a6 6 0 0 0 0 12h3" />
-    </Icon>
-  )
-}
-
-export function MoreIcon(props: Props) {
-  return (
-    <Icon {...props}>
-      <circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" />
-      <circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none" />
     </Icon>
   )
 }

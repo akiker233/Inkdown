@@ -111,6 +111,7 @@ export interface AppInfo {
   platform: NodeJS.Platform
   locale: string
   userDataPath: string
+  repositoryUrl: string
 }
 
 export type ThemeMode = 'system' | 'light' | 'dark'

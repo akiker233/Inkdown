@@ -22,6 +22,8 @@ import { registerRecoveryHandlers } from './recovery.handlers'
 import { registerWindowHandlers } from './window.handlers'
 import { registerWorkspaceHandlers } from './workspace.handlers'
 
+const REPOSITORY_URL = 'https://github.com/akiker233/Inkdown'
+
 export function registerAllHandlers(): void {
   registerFsHandlers()
   registerAssetHandlers()
@@ -38,7 +40,8 @@ export function registerAllHandlers(): void {
       version: app.getVersion(),
       platform: process.platform,
       locale: app.getLocale(),
-      userDataPath: app.getPath('userData')
+      userDataPath: app.getPath('userData'),
+      repositoryUrl: REPOSITORY_URL
     }
   })
 

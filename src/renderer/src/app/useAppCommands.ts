@@ -20,7 +20,6 @@ import {
   toggleStrike,
   undoCommand
 } from '../editor/commands'
-import { t } from '../i18n'
 import { activeTabOf, useEditorStore } from './store/editorStore'
 
 // 导出链路会带进 markdown-it / KaTeX / highlight.js，按需加载避免拖慢启动
@@ -236,16 +235,9 @@ export async function executeMenuCommand(command: MenuCommandId): Promise<void> 
     case 'app.preferences':
       useEditorStore.getState().setPreferencesOpen(true)
       break
-    case 'app.about': {
-      const info = await window.api.app.getInfo()
-      await window.api.dialog.message({
-        type: 'info',
-        message: t('about.message', { version: info.version }),
-        detail: t('about.detail'),
-        buttons: [t('store.gotIt')]
-      })
+    case 'app.about':
+      useEditorStore.getState().setAboutOpen(true)
       break
-    }
     case 'help.checkUpdates':
       await window.api.app.checkUpdates()
       break

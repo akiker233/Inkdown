@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { MenuCommandId } from '@shared/types/menu'
 import { executeMenuCommand } from '../../app/useAppCommands'
 import {
@@ -9,7 +9,7 @@ import {
   ImageIcon,
   InlineCodeIcon,
   LinkIcon,
-  MoreIcon,
+  MathIcon,
   OrderedListIcon,
   QuoteIcon,
   RedoIcon,
@@ -44,41 +44,13 @@ function ToolButton({ label, onClick, children, className }: ToolButtonProps) {
 
 export function FormatToolbar() {
   const { t } = useI18n()
-  const [moreOpen, setMoreOpen] = useState(false)
-  const rootRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!moreOpen) return
-    const onPointerDown = (event: PointerEvent): void => {
-      if (!rootRef.current?.contains(event.target as Node)) setMoreOpen(false)
-    }
-    const onKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') setMoreOpen(false)
-    }
-    document.addEventListener('pointerdown', onPointerDown)
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown)
-      document.removeEventListener('keydown', onKeyDown)
-    }
-  }, [moreOpen])
 
   const run = (command: MenuCommandId) => (): void => {
-    setMoreOpen(false)
     void executeMenuCommand(command)
   }
 
-  const moreItems: Array<{ command: MenuCommandId; label: string } | 'separator'> = [
-    { command: 'paragraph.heading4', label: t('toolbar.h4') },
-    { command: 'paragraph.heading5', label: t('toolbar.h5') },
-    { command: 'paragraph.heading6', label: t('toolbar.h6') },
-    { command: 'paragraph.paragraph', label: t('toolbar.paragraph') },
-    'separator',
-    { command: 'paragraph.mathBlock', label: t('toolbar.mathBlock') }
-  ]
-
   return (
-    <div className="format-toolbar" role="toolbar" aria-label={t('toolbar.label')} ref={rootRef}>
+    <div className="format-toolbar" role="toolbar" aria-label={t('toolbar.label')}>
       <div className="format-toolbar__group">
         <ToolButton label={t('toolbar.image')} onClick={run('format.image')}>
           <ImageIcon size={16} />
@@ -108,6 +80,34 @@ export function FormatToolbar() {
           onClick={run('paragraph.heading3')}
         >
           H3
+        </ToolButton>
+        <ToolButton
+          label={t('toolbar.h4')}
+          className="format-btn--text"
+          onClick={run('paragraph.heading4')}
+        >
+          H4
+        </ToolButton>
+        <ToolButton
+          label={t('toolbar.h5')}
+          className="format-btn--text"
+          onClick={run('paragraph.heading5')}
+        >
+          H5
+        </ToolButton>
+        <ToolButton
+          label={t('toolbar.h6')}
+          className="format-btn--text"
+          onClick={run('paragraph.heading6')}
+        >
+          H6
+        </ToolButton>
+        <ToolButton
+          label={t('toolbar.paragraph')}
+          className="format-btn--text"
+          onClick={run('paragraph.paragraph')}
+        >
+          {t('toolbar.paragraph')}
         </ToolButton>
       </div>
 
@@ -160,6 +160,9 @@ export function FormatToolbar() {
         <ToolButton label={t('toolbar.codeBlock')} onClick={run('paragraph.codeFence')}>
           <CodeBlockIcon size={16} />
         </ToolButton>
+        <ToolButton label={t('toolbar.mathBlock')} onClick={run('paragraph.mathBlock')}>
+          <MathIcon size={16} />
+        </ToolButton>
         <ToolButton label={t('toolbar.hr')} onClick={run('paragraph.hr')}>
           <HrIcon size={16} />
         </ToolButton>
@@ -172,39 +175,6 @@ export function FormatToolbar() {
         <ToolButton label={t('toolbar.redo')} onClick={run('edit.redo')}>
           <RedoIcon size={16} />
         </ToolButton>
-      </div>
-
-      <div className="format-toolbar__more">
-        <ToolButton
-          label={t('toolbar.more')}
-          className={moreOpen ? 'is-open' : undefined}
-          onClick={() => setMoreOpen((open) => !open)}
-        >
-          <MoreIcon size={16} />
-        </ToolButton>
-        {moreOpen ? (
-          <div className="format-toolbar__menu" role="menu">
-            {moreItems.map((item, index) =>
-              item === 'separator' ? (
-                <div key={index} className="format-toolbar__menu-sep" role="separator" />
-              ) : (
-                <button
-                  key={item.command}
-                  type="button"
-                  role="menuitem"
-                  className="format-toolbar__menu-item"
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => {
-                    setMoreOpen(false)
-                    void executeMenuCommand(item.command)
-                  }}
-                >
-                  {item.label}
-                </button>
-              )
-            )}
-          </div>
-        ) : null}
       </div>
     </div>
   )
