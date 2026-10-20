@@ -18,13 +18,14 @@ interface Parsed {
 function parse(
   text: string,
   selection: { from: number; to: number }[] = [],
-  docPath = ''
+  docPath = '',
+  range?: { from: number; to: number }
 ): Parsed {
   return collectBlockDecorations({
     tree: md.parse(text),
     text: { length: text.length, slice: (from, to) => text.slice(from, to) },
-    from: 0,
-    to: text.length,
+    from: range?.from ?? 0,
+    to: range?.to ?? text.length,
     selection,
     docPath
   })
@@ -216,6 +217,12 @@ describe('collectBlockDecorations', () => {
     expect(lineClass(result, secondLine)).toContain('md-hidden-line')
     expect(result.excluded).toHaveLength(1)
     expect(result.atomic).toHaveLength(3)
+  })
+
+  it('窗口结束在表格内部时仍生成表格 widget，不会停在窗口外打转', () => {
+    const text = '| a | b |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |\n'
+    const result = parse(text, [], '', { from: 0, to: text.indexOf('| 3') })
+    expect(widgetsOf(result, 'table')).toHaveLength(1)
   })
 
   it('光标进入表格区间时保留源码', () => {

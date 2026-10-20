@@ -269,13 +269,15 @@ export function collectBlockDecorations(args: {
           source: range
         })
 
-        // 多行表格不能跨行 replace：首行承载 widget，其余行清空并折叠高度
+        // 多行表格不能跨行 replace：首行承载 widget，其余行清空并折叠高度。
+        // 窗口边界可能落在表格内部，必须裁到窗口末尾，否则会停在窗口外原地打转。
+        const limit = Math.min(range.to, to)
         let line = lineEnd(ref.from) + 1
-        while (line <= range.to) {
-          const end = Math.min(lineEnd(line), range.to)
+        while (line <= limit) {
+          const end = Math.min(lineEnd(line), limit)
           if (end > line) replaceRange(line, end)
           addLineClass(line, 'md-hidden-line')
-          if (end >= range.to) break
+          if (end >= limit) break
           line = end + 1
         }
         return false
